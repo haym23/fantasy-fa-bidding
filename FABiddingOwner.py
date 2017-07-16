@@ -83,8 +83,9 @@ def fetch(entries):
     for entry in entries:
         field = entry[0]
         text  = entry[1].get()
-        newStr += condense(text)
+        orig += condense(text)
     textFile(encrypt(orig))
+    
     
 
 def makeform(root, fields):
