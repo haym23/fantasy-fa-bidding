@@ -66,7 +66,8 @@ def send_mail(send_from, send_to, fileName, u, p):
 def condense(bidFields):
     code = ''
     for field in bidFields:
-        code = code + str(field) + '|'
+        code = code + str(field)
+    code += '|'
     return code
 
 def encrypt(orig):
@@ -84,7 +85,9 @@ def fetch(entries):
         field = entry[0]
         text  = entry[1].get()
         orig += condense(text)
-    textFile(encrypt(orig))
+    #textFile(encrypt(orig))
+    textFile(orig)
+    print "Successfully wrote to file"
     
     
 
