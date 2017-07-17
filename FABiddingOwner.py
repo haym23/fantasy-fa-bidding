@@ -7,12 +7,18 @@ from email.mime.audio import MIMEAudio
 from email.mime.base import MIMEBase
 from email.mime.image import MIMEImage
 from email.mime.text import MIMEText
+import base64
+import datetime
 from Tkinter import *
+
+# Make pop up when bid is successfully placed
+# Change email address to bowman
+# Add stuff with timestamp
 
 fields = 'Owner Name', 'Player Name', 'Salary', '# of Years'
 TEXT_FILE = 'faBid.txt'
-USERNAME = ''
-PASSWORD = ''
+USERNAME = 'officialfantasyemail@gmail.com'
+PASSWORD = 'Fantasy2017'
 
 def send_mail(send_from, send_to, fileName, u, p):
     emailfrom = send_from
@@ -24,8 +30,8 @@ def send_mail(send_from, send_to, fileName, u, p):
     msg = MIMEMultipart()
     msg["From"] = emailfrom
     msg["To"] = emailto
-    msg["Subject"] = "help I cannot send an attachment to save my life"
-    msg.preamble = "help I cannot send an attachment to save my life"
+    msg["Subject"] = "Free agent bid"
+    msg.preamble = "Hello comissioner bowman, I have a bid for you"
     ctype, encoding = mimetypes.guess_type(fileToSend)
     if ctype is None or encoding is not None:
         ctype = "application/octet-stream"
@@ -70,9 +76,22 @@ def condense(bidFields):
     code += '|'
     return code
 
-def encrypt(orig):
-    
-    return code
+def encode(clear, key):
+    enc = []
+    for i in range(len(clear)):
+        key_c = key[i % len(key)]
+        enc_c = chr((ord(clear[i]) + ord(key_c)) % 256)
+        enc.append(enc_c)
+    return base64.urlsafe_b64encode("".join(enc))
+
+def decode(enc, key):
+    dec = []
+    enc = base64.urlsafe_b64decode(enc)
+    for i in range(len(enc)):
+        key_c = key[i % len(key)]
+        dec_c = chr((256 + ord(enc[i]) - ord(key_c)) % 256)
+        dec.append(dec_c)
+    return "".join(dec)
 
 def textFile(text):
     f = open(TEXT_FILE, 'w')
@@ -85,10 +104,10 @@ def fetch(entries):
         field = entry[0]
         text  = entry[1].get()
         orig += condense(text)
-    #textFile(encrypt(orig))
-    textFile(orig)
-    print "Successfully wrote to file"
-    
+    orig += '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
+    textFile(decode(encode(orig, 'key'), 'key'))
+    #send_mail(USERNAME, 'haym23@yahoo.com', TEXT_FILE, USERNAME, PASSWORD)
+    print "Successfully sent email to file"
     
 
 def makeform(root, fields):
